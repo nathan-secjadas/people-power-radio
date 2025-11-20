@@ -678,5 +678,13 @@ function initializeTriggerWarning() {
     }
 }
 
+if (window.location.protocol === 'https:') {
+    // This will automatically upgrade HTTP requests to HTTPS
+    var meta = document.createElement('meta');
+    meta.httpEquiv = "Content-Security-Policy";
+    meta.content = "upgrade-insecure-requests";
+    document.getElementsByTagName('head')[0].appendChild(meta);
+}
+
 initializeTriggerWarning();
 console.log();
