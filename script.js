@@ -130,7 +130,7 @@ function initializeApplication() {
             .bindPopup(`
           <div>
               <h3>${station.name}</h3>
-              <p>${station.description}</p>
+              <p>${station.description}</p> <!-- Use general description from Master sheet -->
               <button onclick="selectStation('${station.id}')" class="station-select-btn">Select Station</button>
           </div>
       `);
@@ -553,15 +553,6 @@ function changePanelContent() {
 
         stationsFound++;
 
-        // Update marker popup with date-specific content
-        fullStationData.marker.setPopupContent(`
-        <div>
-            <h3>${fullStationData.name}</h3>
-            <p>${dynamicData.description}</p>
-            <button onclick="selectStation('${stationId}')" class="station-select-btn">Select Station</button>
-        </div>
-    `);
-
         // Create new station list item
         const stationItem = document.createElement('div');
         stationItem.className = 'station-item';
@@ -569,7 +560,7 @@ function changePanelContent() {
         stationItem.innerHTML = `
         <h4>${fullStationData.name}</h4>
         <img src="${fullStationData.icon}" width="30" height="30" alt="${fullStationData.name}">
-        <p>${dynamicData.description}</p>
+        <p>${dynamicData.description}</p> <!-- Keep date-specific description in panel -->
     `;
 
         // Add click handler to select station
