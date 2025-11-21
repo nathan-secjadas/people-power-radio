@@ -172,17 +172,13 @@ header p {
 .progress-handle:active {
   cursor: grabbing;
 }
-
 .timeline {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 0.5rem;
-  font-size: 0.8rem;
-  opacity: 0.8;
-  width: 100%;
-}
-.current-time, .duration {
-  flex: 0 0 auto;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    opacity: 0.8;
+    gap: 0.2rem; 
 }
 .station-list {
   padding: 1.5rem;
