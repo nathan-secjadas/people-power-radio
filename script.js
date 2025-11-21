@@ -8,7 +8,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 // Google Sheets configuration
 const sheetId = "1BZRH8xrng-zS58ey-ex9zhlckyrUGIhEuoUPZcV6zqc"; // The sheet ID from the URL
-const sheetTabs = ["Master", "Feb22", "Feb23", "Feb24", "Feb25"]; // The tabs on the Google Sheets
+const sheetTabs = ["Master", "Date_Descriptions", "Feb22", "Feb23", "Feb24", "Feb25"]; // The tabs on the Google Sheets
  
 // Global variables to store application data
 let stations = [];      // Array of radio station objects from Master sheet
@@ -72,16 +72,27 @@ function transformSheetData(allSheets) {
 
   console.log('Stations loaded:', stations);
 
-  // Process each date tab (excluding Master) to create date-specific content
+  // Process Date_Descriptions tab to create date context mapping
+  const dateDescriptions = {};
+  if (allSheets.Date_Descriptions) {
+    allSheets.Date_Descriptions.forEach(row => {
+      if (row.date && row.event) {
+        dateDescriptions[row.date] = row.event;
+      }
+    });
+    console.log('Date descriptions loaded:', dateDescriptions);
+  }
+
+  // Process each date tab (excluding Master and Date_Descriptions) to create date-specific content
   sheetTabs.forEach(tabName => {
-    if (tabName !== 'Master') {
+    if (tabName !== 'Master' && tabName !== 'Date_Descriptions') {
       const dateData = allSheets[tabName];
       console.log(`Processing ${tabName}:`, dateData);
 
       // Create date content structure with title and context
       dateContent[tabName] = {
         title: `February ${tabName.replace('Feb', '')}`,
-        context: 'context', // Default context - can be updated if available in sheets
+        context: dateDescriptions[tabName] || 'Historical context not available', // Use context from Date_Descriptions
         stations: {}
       };
 
@@ -408,9 +419,9 @@ function setupDateSelector() {
     // Clear any existing options
     dropdown.innerHTML = '';
 
-    // Add options for each date tab (excluding Master)
+    // Add options for each date tab (excluding Master and Date_Descriptions)
     sheetTabs.forEach(tabName => {
-        if (tabName !== 'Master') {
+        if (tabName !== 'Master' && tabName !== 'Date_Descriptions') {
             const option = document.createElement('option');
             option.value = tabName;
             option.textContent = `February ${tabName.replace('Feb', '')}`;
