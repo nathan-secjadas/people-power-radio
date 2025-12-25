@@ -9,17 +9,43 @@
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <link rel="stylesheet" href='https://fonts.googleapis.com/css?family=Antonio'>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="icons/site_icon.ico">
 </head>
 
 <body>
-    <header>
-        <h1>People Power through Radio</h1>
-        <p>Relive the decisive days of February 22-25, 1986 through radio</p>
-    </header>
+    <div class="top">
+        <header>
+            <img src="icons/pp_radio.png" alt="People Power Radio logo" class="logo">
+            <div class="site-title">
+                <h1>People Power through Radio</h1>
+                <p>Relive the decisive days of February 22-25, 1986 through radio</p>
+            </div>
+        </header>
+        <nav>
+            <a href="index.html">Main</a>
+            <a href="about.html">About</a>
+        </nav>
+    </div>
     <!--CONTAINER CLASS-->
     <div class="container">
+        <!--MAP AND TRANSCRIPT CONTAINER-->
         <div class="map-container">
+            <div class="view-dropdown-container">
+                <div class="date-dropdown"> <select id="selectView" onchange="toggleMapPanel()">
+                        <option value="map">Map View</option>
+                        <option value="transcript">Audio Transcript</option>
+                    </select>
+                </div>
+            </div>
+
             <div id="map"></div>
+
+            <div id="transcript-panel" style="display: none;">
+                <h2>Transcript</h2>
+                <div id="transcript-content">
+                    <p>Select a station to view its transcript.</p>
+                </div>
+            </div>
         </div>
 
         <!--CONTENT PANEL-->
@@ -53,6 +79,7 @@
             <div class="radio-player">
                 <!--station info-->
                 <div class="station-info">
+                    <img id="station-icon" src="icons/rv.png" alt="Radio Station Icon" class="station-icon">
                     <h3 id="current-station" data-id="rv">Radio Veritas</h3>
                     <p id="station-description">loading....</p>
                 </div>
@@ -100,6 +127,16 @@
             <p>By clicking "I Understand", you acknowledge this warning and wish to proceed.</p>
             <button id="modal-understand-btn">I Understand</button>
         </div>
+    </div>
+
+    <!--mode toggle-->
+    <div id="mode-toggle" onclick="toggleMode()" title="Toggle Light/Dark Mode">
+        <img id="mode-icon" src="icons/mode_icon.png" alt="🌓"> 
+    </div>
+
+    <!--theme toggle-->
+    <div id="theme-toggle" onclick="cycleTheme()" title="Change Theme">
+        <img src="icons/theme_icon.png" alt="🎨">
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

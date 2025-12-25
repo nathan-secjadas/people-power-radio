@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>People Power through Radio</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href='https://fonts.googleapis.com/css?family=Antonio'>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="icons/site_icon.ico">
+</head>
+    
+<body>
+    <div class="top">
+        <header>
+            <img src="icons/pp_radio.png" alt="People Power Radio logo" class="logo">
+            <div class="site-title">
+                <h1>People Power through Radio</h1>
+                <p>Relive the decisive days of February 22-25, 1986 through radio</p>
+            </div>
+        </header>
+        <nav>
+            <a href="index.html">Main</a>
+            <a href="about.html">About</a>
+        </nav>
+    </div>
+    <div class="container">
+        <div class="content-panel">
+            <div class="about-dropdown">
+                <select id="aboutSelect" aria-label="About contributors">
+                    <option value="hum">HUM Contributors</option>
+                    <option value="it">IT Contributors</option>
+                </select>
+            </div>
+            <div class="info-section">
+                <h2>About</h2>
+                <div class="about-contents">
+                    <div class="option-content" data-value="hum" id="hum-content">
+                        <h3>HUM Contributors</h3>
+                            <p>The HUM contributers provided the descriptions, audio files, contextual information, radio locations, and the general concept of the site.</p>
+                            <ul>
+                                <li>Contributor A</li>
+                                <li>Contributor B</li>
+                            </ul>
+                    </div>
+                    <div class="option-content" data-value="it" id="it-content">
+                        <h3>IT Contributors</h3>
+                            <p>The IT contributers handled the site architecture, mapping integration, audio encoding, playback and overall design of the site.</p>
+                            <ul>
+                                <li>Isabel Angela P. Llanes - Project Manager and Tester</li>
+                                <li>Nathan Janderson R. Secjadas - Site Developer and Coder</li>
+                                <li>Gabriel Leonardo B. Polinar - Data Manager and Coder</li>
+                                <li>George Fortuna - Quality Assurance and Tester</li>
+                             </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--mode toggle-->
+    <div id="mode-toggle" onclick="toggleMode()" title="Toggle Light/Dark Mode">
+        <img id="mode-icon" src="icons/mode_icon.png" alt="🌓"> 
+    </div>
+    
+    <!--theme toggle-->
+    <div id="theme-toggle" onclick="cycleTheme()" title="Change Theme">
+        <img src="icons/theme_icon.png" alt="🎨">
+    </div>
+<script src="script.js"></script>
+</body>
+</html>

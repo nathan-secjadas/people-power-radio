@@ -1,10 +1,14 @@
-// Initialize the map with Metro Manila coordinates and zoom level
-const map = L.map('map').setView([14.5995, 120.9842], 10);
+// Declare `map` globally but only initialize it when Leaflet and the #map element exist.
+let map = null;
+if (typeof L !== 'undefined' && document.getElementById('map')) {
+  // Initialize the map with Metro Manila coordinates and zoom level
+  map = L.map('map').setView([14.5995, 120.9842], 10);
 
-// Add OpenStreetMap tiles to the map with proper attribution; the main visualizer
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  // Add OpenStreetMap tiles to the map with proper attribution; the main visualizer
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
+  }).addTo(map);
+}
 
 // Google Sheets configuration
 const sheetId = "1BZRH8xrng-zS58ey-ex9zhlckyrUGIhEuoUPZcV6zqc"; // The sheet ID from the URL
@@ -101,7 +105,8 @@ function transformSheetData(allSheets) {
         if (stationData.id && stationData.id.trim() !== '') {
           dateContent[tabName].stations[stationData.id] = {
             description: stationData.description || 'No description available',
-            audioUrl: stationData.audioUrl || '#' // Fallback for missing audio
+            audioUrl: stationData.audioUrl || '#', // Fallback for missing audio
+            transcript: stationData.transcript || 'No transcript available'
           };
         }
       });
@@ -117,48 +122,51 @@ function transformSheetData(allSheets) {
  * Initializes the main application components after data is loaded
  */
 function initializeApplication() {
+  // If Leaflet/map is present, create map markers. Otherwise skip map-specific setup.
+  if (map && typeof L !== 'undefined') {
     // Create custom map markers for radio stations
     const radioIcon = L.divIcon({
-        className: 'radio-marker',
-        html: '<div class="signal-waves"></div>',
-        iconSize: [20, 20],
-        iconAnchor: [10, 10] // Anchor point at center bottom
+      className: 'radio-marker',
+      html: '<div class="signal-waves"></div>',
+      iconSize: [20, 20],
+      iconAnchor: [10, 10] // Anchor point at center bottom
     });
 
     const activeRadioIcon = L.divIcon({
-        className: 'radio-marker active',
-        html: '<div class="signal-waves"></div>',
-        iconSize: [30, 30],
-        iconAnchor: [15, 15] // Larger size for active station
+      className: 'radio-marker active',
+      html: '<div class="signal-waves"></div>',
+      iconSize: [30, 30],
+      iconAnchor: [15, 15] // Larger size for active station
     });
 
     // Add markers to map for each radio station
     stations.forEach(station => {
-        const marker = L.marker([station.lat, station.lng], {
-            icon: radioIcon
-        })
-            .addTo(map)
-            .bindPopup(`
-          <div>
-              <h3>${station.name}</h3>
-              <p>${station.description}</p> <!-- Use general description from Master sheet -->
-              <button onclick="selectStation('${station.id}')" class="station-select-btn">Select Station</button>
-          </div>
-      `);
+      const marker = L.marker([station.lat, station.lng], {
+        icon: radioIcon
+      })
+        .addTo(map)
+        .bindPopup(`
+      <div>
+        <h3>${station.name}</h3>
+        <p>${station.description}</p> <!-- Use general description from Master sheet -->
+        <button onclick="selectStation('${station.id}')" class="station-select-btn">Select Station</button>
+      </div>
+    `);
 
-        // Store marker reference for later manipulation
-        station.marker = marker;
+      // Store marker reference for later manipulation
+      station.marker = marker;
 
-        // Add click event to select station when marker is clicked
-        marker.on('click', function() {
-            selectStation(station.id);
-        });
+      // Add click event to select station when marker is clicked
+      marker.on('click', function() {
+        selectStation(station.id);
+      });
     });
+  }
 
-    // Initialize remaining application components
-    initializeAudioPlayer();
-    setupDateSelector();
-    changePanelContent(); // Load initial content based on default date
+  // Initialize remaining application components (audio and UI)
+  initializeAudioPlayer();
+  setupDateSelector();
+  changePanelContent(); // Load initial content based on default date
 }
 
 /**
@@ -177,6 +185,7 @@ function initializeAudioPlayer() {
   const volumeSlider = document.getElementById('volume-slider');
   const volumeBtn = document.getElementById('volume-btn');
   const volumeControl = document.querySelector('.volume-control');
+  const stationIconEl = document.getElementById('station-icon');
 
   // Audio player state variables
   let isPlaying = false;
@@ -407,6 +416,7 @@ function initializeAudioPlayer() {
   window.playBtn = playBtn;
   window.currentStationEl = currentStationEl;
   window.stationDescriptionEl = stationDescriptionEl;
+  window.stationIconEl = stationIconEl;
   window.resetProgress = resetProgress;
 }
 
@@ -468,10 +478,23 @@ function selectStation(stationId) {
     }
   });
 
+  // Update station icon display
+  if (window.stationIconEl) {
+    // Use trimmed icon URL from sheet if available, otherwise fallback to local icon
+    const iconUrl = station.icon && station.icon.trim() ? station.icon.trim() : 'icons/rv.png';
+    window.stationIconEl.src = iconUrl;
+    window.stationIconEl.alt = station.name || '';
+    window.stationIconEl.style.display = iconUrl ? 'inline-block' : 'none';
+  }
+
   // Update player display with station info
   window.currentStationEl.textContent = station.name;
   window.stationDescriptionEl.textContent = dynamicData.description;
-
+  const transcriptEl = document.getElementById('transcript-content');
+  if (transcriptEl) {
+    transcriptEl.innerHTML = `<p>${dynamicData.transcript}</p>`;
+  }
+  
   // Load and play new audio source with looping enabled
   window.audioPlayer.src = dynamicData.audioUrl;
   window.audioPlayer.loop = true; // Enable automatic looping
@@ -507,9 +530,13 @@ function selectStation(stationId) {
     });
   }
 
-  // Center map on selected station and open popup
-  map.setView([station.lat, station.lng], 12);
-  station.marker.openPopup();
+  // Check if map is actually visible before trying to move it
+  const mapDiv = document.getElementById('map');
+  if (mapDiv.style.display !== 'none') {
+    // If map is NOT hidden (display is not 'none'), update it immediately
+    map.setView([station.lat, station.lng], 12);
+    station.marker.openPopup();
+  }
 }
 
 // Make selectStation globally available for HTML onclick handlers
@@ -593,6 +620,45 @@ function changePanelContent() {
         const firstStationWithData = stations.find(station => dateSpecificContent.stations[station.id]);
         if (firstStationWithData) {
             selectStation(firstStationWithData.id);
+        }
+    }
+}
+
+/**
+ * Toggles between Map view and Transcript view
+ */
+function toggleMapPanel() {
+    const view = document.getElementById('selectView').value;
+    const mapDiv = document.getElementById('map');
+    const transcriptDiv = document.getElementById('transcript-panel');
+
+    if (view === 'transcript') {
+        mapDiv.style.display = 'none';
+        transcriptDiv.style.display = 'block';
+    } else {
+        // Switch to Map View
+        transcriptDiv.style.display = 'none';
+        mapDiv.style.display = 'block';
+        
+        // 1. Fix Leaflet size calculation
+        if (map) {
+            map.invalidateSize();
+        }
+
+        // 2. "Catch up" - Update the map to show the currently playing station
+        // Get the ID of the station currently loaded in the player
+        const currentId = document.getElementById('current-station').dataset.id;
+        
+        // Find that station in our data
+        const activeStation = stations.find(s => s.id === currentId);
+
+        // If we found it, center the map and open the popup correctly
+        if (activeStation && activeStation.marker) {
+            // Small timeout ensures the map is fully rendered before panning
+            setTimeout(() => {
+                map.setView([activeStation.lat, activeStation.lng], 12);
+                activeStation.marker.openPopup();
+            }, 100);
         }
     }
 }
@@ -687,6 +753,90 @@ if (window.location.protocol === 'https:') {
     meta.content = "upgrade-insecure-requests";
     document.getElementsByTagName('head')[0].appendChild(meta);
 }
+
+// --- Updated Theme & Mode Configuration ---
+
+// 1. Define available Color Themes (excluding 'theme-dark' as that is now a mode)
+const colorThemes = ['', 'theme-yellow', 'theme-red', 'theme-retro-pink'];
+let currentThemeIndex = 0;
+
+// 2. Track Mode State
+let isDarkMode = false;
+
+// Function to toggle Light/Dark Mode
+function toggleMode() {
+    isDarkMode = !isDarkMode;
+    applyAppearance();
+    
+    // Save preference
+    localStorage.setItem('userMode', isDarkMode ? 'dark' : 'light');
+}
+
+// Function to cycle Color Themes
+function cycleTheme() {
+    currentThemeIndex++;
+    if (currentThemeIndex >= colorThemes.length) {
+        currentThemeIndex = 0;
+    }
+    applyAppearance();
+    
+    // Save preference
+    localStorage.setItem('userThemeIndex', currentThemeIndex);
+}
+
+// Master function to apply classes based on state
+function applyAppearance() {
+    const body = document.body;
+    const modeBtn = document.getElementById('mode-toggle');
+    
+    // 1. Reset Classes: Remove all known theme classes and mode class
+    colorThemes.forEach(t => { if(t) body.classList.remove(t) });
+    body.classList.remove('mode-dark');
+
+    // 2. Apply Current Color Theme
+    const themeClass = colorThemes[currentThemeIndex];
+    if (themeClass) {
+        body.classList.add(themeClass);
+    }
+
+    // 3. Apply Dark Mode if active
+    if (isDarkMode) {
+        body.classList.add('mode-dark');
+        if(modeBtn) modeBtn.innerHTML = '🌙'; // Update icon to Moon
+    } else {
+        if(modeBtn) modeBtn.innerHTML = '☀️'; // Update icon to Sun
+    }
+}
+
+// Initialize on Load
+window.addEventListener('DOMContentLoaded', () => {
+    // Load Color Theme
+    const savedThemeIndex = localStorage.getItem('userThemeIndex');
+    if (savedThemeIndex !== null) {
+        currentThemeIndex = parseInt(savedThemeIndex);
+    }
+
+    // Load Mode
+    const savedMode = localStorage.getItem('userMode');
+    if (savedMode === 'dark') {
+        isDarkMode = true;
+    }
+
+    applyAppearance();
+});
+
+// About page: switch between HUM and IT contributor blocks
+document.addEventListener('DOMContentLoaded', function () {
+  const sel = document.getElementById('aboutSelect');
+  if (!sel) return;
+  const blocks = Array.from(document.querySelectorAll('.option-content'));
+  function show(val) {
+    blocks.forEach(b => b.classList.toggle('active', b.dataset.value === val));
+  }
+  sel.addEventListener('change', e => show(e.target.value));
+  // initialize
+  show(sel.value || (sel.options[0] && sel.options[0].value));
+});
 
 initializeTriggerWarning();
 console.log();
