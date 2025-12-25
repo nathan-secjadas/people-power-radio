@@ -1,0 +1,718 @@
+:root {
+/* --- BASE DEFAULTS (Light Mode / Blue Theme) --- */
+  
+  /* Structure/Mode Variables (Light) */
+  --color-bg: #f5f5f5;
+  --color-text: #333333;
+  --color-white: #ffffff;
+  --soft-bg: #f9f9f9;
+  --muted-grey: #eeeeee;
+  --alt-grey: #f0f0f0;
+  --border-muted: #caced1;
+  --muted-text: #666666;
+  --overlay-dark: rgba(0,0,0,0.8);
+  --shadow-weak: rgba(0,0,0,0.3);
+  --shadow-strong: rgba(0,0,0,0.5);
+  --overlay-white-30: rgba(255,255,255,0.3);
+
+  /* Brand/Accent Variables (Default Blue) */
+  --color-primary: #4a69a7;
+  --accent-secondary: #e0bc08;
+  --accent-secondary-2: #ffd414;
+  --accent-secondary-hover: #ebeb76;
+  --muted-primary-1: #98afc7;
+  --muted-primary-2: #98a3c7;
+  --light-primary: #e6ebff;
+  --volume-panel-bg: rgba(100,100,255,0.8);
+  --signal-color: #4d50f7;
+  --danger: #ff6b6b;
+  --radio-marker-glow: rgba(77,171,247,0.7);
+  --danger-glow: rgba(255,107,107,0.8);
+}
+.theme-yellow {
+  /* Yellow Accents */
+  --color-primary: #FAB12F;
+  --accent-secondary: #4a75c4;
+  --accent-secondary-2: #558ace;
+  --accent-secondary-hover: #769cb3;
+  --muted-primary-1: #f3d8aa;
+  --muted-primary-2: #c7b698;
+  --light-primary: #faefca;
+  --volume-panel-bg: rgba(197, 188, 148, 0.8);
+  --signal-color: #f0bc11;
+  --radio-marker-glow: rgba(255, 187, 61, 0.7);
+  
+  /* Optional: Keep the cream BG for Yellow Light mode only */
+  --color-bg: #F8F4EC; 
+  --soft-bg: #faf9f3;
+  --muted-grey: #f8e2b3;
+  --alt-grey: #fcf8ed;
+}
+
+.theme-red {
+  /* Red Accents */
+  --color-primary: #af3838;
+  --accent-secondary: #ff5454;
+  --accent-secondary-2: #ff5e5e;
+  --accent-secondary-hover: #ffadad;
+  --muted-primary-1: #f3c9db;
+  --muted-primary-2: #c798af;
+  --light-primary: #ffd3e3;
+  --volume-panel-bg: rgba(250, 204, 215, 0.8);
+  --signal-color: #c44444;
+  --radio-marker-glow: rgba(173, 45, 88, 0.7);
+
+  /* Optional: Keep pinkish BG for Red Light mode */
+  --color-bg: #F8F4EC;
+  --soft-bg: #faf3f5;
+  --muted-grey: #f8b3ce;
+  --alt-grey: #ffdfe6;
+}
+
+.theme-retro-pink {
+  /* Pink Accents */
+  --color-primary: #E83C91;
+  --accent-secondary: #ff78a5;
+  --accent-secondary-2: #ff9dd6;
+  --accent-secondary-hover: #ffd0e0;
+  --muted-primary-1: #f3c9db;
+  --muted-primary-2: #c798af;
+  --light-primary: #facadb;
+  --volume-panel-bg: rgba(197, 148, 160, 0.8);
+  --signal-color: #c4448e;
+  --radio-marker-glow: rgba(255, 103, 153, 0.7);
+
+  /* Optional: Keep pinkish BG */
+  --color-bg: #F8F4EC;
+  --soft-bg: #faf3f5;
+  --muted-grey: #f8b3ce;
+  --alt-grey: #fcedf3;
+}
+
+/* --- DARK MODE OVERRIDE --- */
+body.mode-dark {
+
+  --color-bg: #333333;
+  --color-text: #f5f5f5;
+  --color-white: #252525;
+  --soft-bg: #202020;
+  --muted-grey: #5f5656;
+  --alt-grey: #505568;
+  --border-muted: #848b91;
+  --muted-text: #d3d0d0;
+  
+  /* Adjust specific theme vars for dark mode visibility if needed */
+  --light-primary: #32374b; 
+}
+
+/* Adjust the positioning of the new toggle button */
+#mode-toggle {
+    position: fixed;
+    bottom: 80px; /* Positions it above the theme toggle (which is at 20px) */
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: var(--color-white); /* Contrast against map */
+    color: var(--color-text);
+    border-radius: 50%;
+    box-shadow: 0 4px 10px var(--shadow-strong);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    transition: transform 0.2s;
+    border: 2px solid var(--color-primary);
+    font-size: 1.5rem; /* For the emoji/icon */
+}
+
+#mode-toggle:hover {
+    transform: scale(1.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Tahoma, Geneva, Verdana, sans-serif
+}
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+}
+.top {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  box-shadow: 0 2px 5px var(--shadow-weak);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+}
+header {
+  padding: 0;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+header h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+header p {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+nav {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+nav a {
+  font-size: 1rem;
+  color: var(--color-white);
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  text-align: center;
+}
+nav a:hover {
+  color: var(--accent-secondary);
+}
+
+@media (max-width: 600px) {
+  .top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  nav {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  nav a {
+    margin-left: 0;
+    margin-right: 0.5rem;
+  }
+}
+.logo {
+  height: 3.25rem; 
+  width: auto;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.site-title h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.15rem;
+}
+.site-title p {
+  font-size: 1rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+  .logo {
+    height: 2.25rem;
+  }
+  header {
+    gap: 0.5rem;
+  }
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem;
+  position: relative; 
+  overflow: visible;
+}
+@media (min-width: 992px) {
+  .container {
+      flex-direction: row;
+      height: calc(100vh - 120px)
+  }
+}
+.map-container {
+  flex: 1;
+  height: 400px;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px var(--shadow-weak);
+  position: relative;
+  z-index: 1; /* sit above the decorative background */
+}
+@media (min-width: 992px) {
+  .map-container {
+      height: auto;
+      margin-bottom: 0;
+      margin-right: 1rem;
+  }
+}
+#map {
+  height: 100%;
+  width: 100%;
+}
+.date-dropdown {
+  position: relative;
+}
+.date-dropdown select {
+  appearance: none;
+  -moz-appearance: none;
+  color: var(--color-white);
+  background-color: var(--color-primary);
+  border: 1px solid var(--border-muted);
+  border-radius: 0.25rem;
+  padding: 0.675em 1em;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+}
+.date-dropdown::after {
+  content: '▼';
+  position: absolute;
+  top: 50%;
+  right: 1em;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--color-white);
+}
+.content-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-white);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px var(--shadow-weak);
+  overflow: hidden;
+  position: relative;
+  z-index: 1; /* sit above the decorative background */
+}
+.info-section {
+  padding: 1.5rem;
+  flex: 1;
+  overflow-y: auto;
+}
+.info-section h2 {
+  color: var(--color-primary);
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--muted-primary-1);
+  padding-bottom: 0.5rem;
+}
+.radio-player {
+  background: var(--color-primary);
+  color: var(--color-white);
+  padding: 1rem;
+  border-top: 3px solid var(--muted-primary-2)
+}
+.station-info {
+  margin-bottom: 1rem;
+}
+.station-info h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+.station-info img {
+  float: right;
+  display: none;
+  width: 60px;
+  height: 60px;
+}
+.about-dropdown {
+  position: relative;
+}
+.about-dropdown select {
+  appearance: none;
+  -moz-appearance: none;
+  color: var(--color-white);
+  background-color: var(--color-primary);
+  border: 1px solid var(--border-muted);
+  border-radius: 0.25rem;
+  padding: 0.675em 1em;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+}
+.about-dropdown::after {
+  content: '▼';
+  position: absolute;
+  top: 50%;
+  right: 1em;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--color-white);
+}
+
+/* Per-option content styling (hidden by default) */
+.about-contents {
+  padding: 1rem 1.5rem 2rem 1.5rem;
+}
+.option-content {
+  display: none;
+  color: var(--color-text);
+}
+.option-content.active {
+  display: block;
+}
+.option-content h3 {
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+}
+.option-content p {
+  margin-bottom: 0.75rem;
+}
+
+@media (max-width: 600px) {
+  .about-contents { padding: 0.75rem; }
+}
+.audio-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+}
+.audio-controls button {
+  background: var(--accent-secondary);
+  color: var(--color-white);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.audio-controls button:hover {
+  background: var(--accent-secondary-hover);
+}
+
+/* Progress Bar Styles */
+.progress-container {
+  flex: 1;
+  background: var(--overlay-white-30);
+  height: 8px;
+  border-radius: 4px;
+  overflow: visible;
+  position: relative;
+  cursor: pointer;
+}
+.progress-bar {
+  height: 100%;
+  background: var(--accent-secondary);
+  width: 0%;
+  border-radius: 4px;
+  position: relative;
+}
+.progress-handle {
+  position: absolute;
+  top: 50%;
+  right: -6px;
+  width: 12px;
+  height: 12px;
+  background: var(--color-white);
+  border-radius: 50%;
+  transform: translateY(-50%);
+  cursor: grab;
+  box-shadow: 0 0 4px var(--shadow-strong);
+  transition: all 0.2s;
+  opacity: 0;
+}
+.progress-handle:hover,
+.progress-container:hover .progress-handle,
+.progress-container.dragging .progress-handle {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.2);
+}
+.progress-handle:active {
+  cursor: grabbing;
+}
+.timeline {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    opacity: 0.8;
+    gap: 0.2rem; 
+}
+.station-list {
+  padding: 1.5rem;
+}
+.station-item {
+  padding: 0.8rem;
+  border-bottom: 1px solid var(--muted-grey);
+  cursor: pointer;
+  transition: background 0.2s;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+.station-item:hover {
+  background: var(--alt-grey);
+}
+.station-item.active {
+  background: var(--light-primary);
+  border-left: 3px solid var(--color-primary)
+}
+.station-item h4 {
+  color: var(--color-primary);
+  margin-bottom: 0.3rem;
+}
+.station-item p {
+  font-size: 0.9rem;
+  color: var(--muted-text);
+}
+footer {
+  background: var(--color-primary);
+  color: var(--color-white);
+  text-align: center;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+.historical-context {
+  background: var(--soft-bg);
+  padding: 1rem;
+  border-radius: 4px;
+  margin-top: 1.5rem;
+}
+.historical-context h3{
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+}
+
+/* Volume Control Styles */
+.volume-control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.volume-btn {
+  background: transparent;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 5px;
+  transition: transform 0.2s;
+}
+
+.volume-btn:hover {
+  transform: scale(1.1);
+}
+
+.volume-panel {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  background: var(--volume-panel-bg);
+  padding: 15px 8px;
+  border-radius: 8px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.volume-control:hover .volume-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+#volume-slider {
+  width: 8px;
+  height: 80px;
+  writing-mode: bt-lr;
+  -webkit-appearance: slider-vertical;
+  appearance: slider-vertical;
+  cursor: pointer;
+}
+
+#volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--accent-secondary);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+#volume-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--accent-secondary);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+/*RADIO MARKER*/
+.radio-marker {
+  background: var(--accent-secondary-2);
+  border: 3px solid var(--color-white);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  box-shadow: 0 0 10px var(--radio-marker-glow);
+  transition: all 0.3s;
+}
+
+.radio-marker.active {
+  width: 30px;
+  height: 30px;
+  background: var(--danger);
+  box-shadow: 0 0 15px var(--danger-glow);
+}
+
+.signal-waves {
+  position: absolute;
+  border: 2px solid var(--signal-color);
+  border-radius: 70%;
+  width: 20px;
+  height: 20px;
+  left: -2px;
+  top: -1px;
+  animation: pulse 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse {
+  0% {
+      transform: scale(1);
+      opacity: 1;
+  }
+  100% {
+      transform: scale(3);
+      opacity: 0;
+  }
+}
+
+/* Trigger Warning Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--overlay-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000; /* Very high z-index to ensure it's on top */
+}
+
+.modal-content {
+    background: var(--color-white);
+    padding: 2rem;
+    border-radius: 10px;
+    max-width: 500px;
+    margin: 1rem;
+    box-shadow: 0 4px 20px var(--shadow-strong);
+    text-align: center;
+}
+
+.modal-content h2 {
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.modal-content p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: var(--color-text);
+}
+
+#modal-understand-btn {
+    background: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 1rem;
+}
+
+#modal-understand-btn:hover {
+    background: var(--muted-primary-1);
+}
+
+.modal-overlay {
+    display: none;
+}
+/* Update map-container to handle the header stacking */
+.map-container {
+    display: flex;
+    flex-direction: column;
+    /* Ensure it keeps the background/border styles you already have */
+}
+
+/* Container for the new dropdown to give it some padding */
+.view-dropdown-container {
+    background: var(--color-primary); /* Match header color */
+    border-radius: 8px 8px 0 0; /* Rounded top corners only */
+}
+
+/* Force the map to take remaining height */
+#map {
+    flex: 1;
+    border-radius: 0 0 8px 8px; /* Round bottom corners */
+}
+
+/* Styles for the new Transcript Panel */
+#transcript-panel {
+    flex: 1;
+    background: var(--color-white);
+    padding: 2rem;
+    overflow-y: auto; /* Allow scrolling if text is long */
+    text-align: center; /* Center the text as requested */
+    border-radius: 0 0 8px 8px;
+}
+
+#transcript-panel h2 {
+    color: var(--color-primary); /* Blue text */
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    border-bottom: 2px solid var(--muted-primary-1);
+    padding-bottom: 0.5rem;
+    display: inline-block; /* Keeps underline under text only */
+    width: 100%;
+}
+
+#transcript-panel p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--color-text);
+    max-width: 80%;
+    margin: 0 auto; /* Center the block of text */
+}
+
+#theme-toggle {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: var(--color-primary); /* Button matches theme! */
+    border-radius: 50%;
+    box-shadow: 0 4px 10px var(--shadow-strong);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000; /* Ensure it floats above everything */
+    transition: transform 0.2s, background-color 0.3s;
+    border: 2px solid white;
+}
+
+#theme-toggle:hover {
+    transform: scale(1.1);
+}
+
+#theme-toggle img {
+    width: 24px;
+    height: 24px;
+}
